@@ -1,0 +1,97 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API for managing users",
+        "title": "User API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/trading/holings": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holings"
+                ],
+                "summary": "Get all holings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/smartapigo.Holding"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "smartapigo.Holding": {
+            "type": "object",
+            "properties": {
+                "authorisedquantity": {
+                    "type": "number"
+                },
+                "collateralquantity": {
+                    "type": "string"
+                },
+                "collateraltype": {
+                    "type": "string"
+                },
+                "exchange": {
+                    "type": "string"
+                },
+                "haircut": {
+                    "type": "number"
+                },
+                "isin": {
+                    "type": "string"
+                },
+                "product": {
+                    "type": "string"
+                },
+                "profitandloss": {
+                    "type": "number"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "realisedquantity": {
+                    "type": "number"
+                },
+                "t1quantity": {
+                    "type": "number"
+                },
+                "tradingsymbol": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-Token",
+            "in": "header"
+        }
+    }
+}

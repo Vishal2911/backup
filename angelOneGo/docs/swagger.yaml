@@ -1,0 +1,63 @@
+basePath: /
+definitions:
+  smartapigo.Holding:
+    properties:
+      authorisedquantity:
+        type: number
+      collateralquantity:
+        type: string
+      collateraltype:
+        type: string
+      exchange:
+        type: string
+      haircut:
+        type: number
+      isin:
+        type: string
+      product:
+        type: string
+      profitandloss:
+        type: number
+      quantity:
+        type: number
+      realisedquantity:
+        type: number
+      t1quantity:
+        type: number
+      tradingsymbol:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API for managing users
+  title: User API
+  version: "1.0"
+paths:
+  /trading/holings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/smartapigo.Holding'
+              type: array
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all holings
+      tags:
+      - holings
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Token
+    type: apiKey
+swagger: "2.0"
