@@ -1,0 +1,316 @@
+What is a Tree?
+A tree is a hierarchical data structure consisting of nodes, with a single node as the root from which other nodes descend.
+Trees are used to represent hierarchical relationships, such as file systems, organizational structures, and more.
+Binary Tree
+What is a Binary Tree?
+A binary tree is a tree data structure in which each node has at most two children, referred to as the left child and the right child.
+Common Operations
+Insertion: Adding a new node to the tree.
+Deletion: Removing a node from the tree.
+Traversal: Visiting all nodes in a specific order (in-order, pre-order, post-order).
+Binary Search Tree (BST)
+What is a Binary Search Tree?
+A BST is a binary tree in which the left child of a node contains only nodes with values less than the parent node, and the right child only nodes with values greater than the parent node.
+AVL Tree
+What is an AVL Tree?
+An AVL tree is a self-balancing binary search tree where the difference between the heights of the left and right subtrees cannot be more than one for all nodes.
+Red-Black Tree
+What is a Red-Black Tree?
+A Red-Black tree is a self-balancing binary search tree where each node contains an extra bit for denoting the color of the node, either red or black, to ensure the tree remains balanced.
+Tree Traversals
+In-Order Traversal
+Visit the left subtree, the root node, and then the right subtree.
+Pre-Order Traversal
+Visit the root node, the left subtree, and then the right subtree.
+Post-Order Traversal
+Visit the left subtree, the right subtree, and then the root node.
+Examples and Exercises
+Binary Tree Implementation
+go
+
+package main
+
+import "fmt"
+
+type Node struct {
+    value int
+    left  *Node
+    right *Node
+}
+
+type BinaryTree struct {
+    root *Node
+}
+
+func (t *BinaryTree) Insert(value int) {
+    if t.root == nil {
+        t.root = &Node{value: value}
+    } else {
+        t.root.insert(value)
+    }
+}
+
+func (n *Node) insert(value int) {
+    if value <= n.value {
+        if n.left == nil {
+            n.left = &Node{value: value}
+        } else {
+            n.left.insert(value)
+        }
+    } else {
+        if n.right == nil {
+            n.right = &Node{value: value}
+        } else {
+            n.right.insert(value)
+        }
+    }
+}
+
+func (t *BinaryTree) InOrderTraversal() {
+    inOrderTraversal(t.root)
+    fmt.Println()
+}
+
+func inOrderTraversal(n *Node) {
+    if n == nil {
+        return
+    }
+    inOrderTraversal(n.left)
+    fmt.Print(n.value, " ")
+    inOrderTraversal(n.right)
+}
+
+func main() {
+    tree := BinaryTree{}
+    tree.Insert(5)
+    tree.Insert(3)
+    tree.Insert(7)
+    tree.Insert(2)
+    tree.Insert(4)
+    tree.Insert(6)
+    tree.Insert(8)
+
+    fmt.Print("In-Order Traversal: ")
+    tree.InOrderTraversal() // Output: 2 3 4 5 6 7 8
+}
+Binary Search Tree Implementation
+go
+
+package main
+
+import "fmt"
+
+type Node struct {
+    value int
+    left  *Node
+    right *Node
+}
+
+type BST struct {
+    root *Node
+}
+
+func (t *BST) Insert(value int) {
+    if t.root == nil {
+        t.root = &Node{value: value}
+    } else {
+        t.root.insert(value)
+    }
+}
+
+func (n *Node) insert(value int) {
+    if value <= n.value {
+        if n.left == nil {
+            n.left = &Node{value: value}
+        } else {
+            n.left.insert(value)
+        }
+    } else {
+        if n.right == nil {
+            n.right = &Node{value: value}
+        } else {
+            n.right.insert(value)
+        }
+    }
+}
+
+func (t *BST) InOrderTraversal() {
+    inOrderTraversal(t.root)
+    fmt.Println()
+}
+
+func inOrderTraversal(n *Node) {
+    if n == nil {
+        return
+    }
+    inOrderTraversal(n.left)
+    fmt.Print(n.value, " ")
+    inOrderTraversal(n.right)
+}
+
+func main() {
+    tree := BST{}
+    tree.Insert(5)
+    tree.Insert(3)
+    tree.Insert(7)
+    tree.Insert(2)
+    tree.Insert(4)
+    tree.Insert(6)
+    tree.Insert(8)
+
+    fmt.Print("In-Order Traversal: ")
+    tree.InOrderTraversal() // Output: 2 3 4 5 6 7 8
+}
+AVL Tree Implementation
+go
+
+package main
+
+import "fmt"
+
+type Node struct {
+    value int
+    left  *Node
+    right *Node
+    height int
+}
+
+type AVLTree struct {
+    root *Node
+}
+
+func (t *AVLTree) Insert(value int) {
+    t.root = t.root.insert(value)
+}
+
+func (n *Node) insert(value int) *Node {
+    if n == nil {
+        return &Node{value: value, height: 1}
+    }
+
+    if value < n.value {
+        n.left = n.left.insert(value)
+    } else {
+        n.right = n.right.insert(value)
+    }
+
+    n.height = max(height(n.left), height(n.right)) + 1
+    return n.balance()
+}
+
+func (n *Node) balance() *Node {
+    if balanceFactor(n) > 1 {
+        if balanceFactor(n.left) < 0 {
+            n.left = n.left.rotateLeft()
+        }
+        return n.rotateRight()
+    }
+    if balanceFactor(n) < -1 {
+        if balanceFactor(n.right) > 0 {
+            n.right = n.right.rotateRight()
+        }
+        return n.rotateLeft()
+    }
+    return n
+}
+
+func (n *Node) rotateLeft() *Node {
+    r := n.right
+    n.right = r.left
+    r.left = n
+    n.height = max(height(n.left), height(n.right)) + 1
+    r.height = max(height(r.left), height(r.right)) + 1
+    return r
+}
+
+func (n *Node) rotateRight() *Node {
+    l := n.left
+    n.left = l.right
+    l.right = n
+    n.height = max(height(n.left), height(n.right)) + 1
+    l.height = max(height(l.left), height(l.right)) + 1
+    return l
+}
+
+func balanceFactor(n *Node) int {
+    if n == nil {
+        return 0
+    }
+    return height(n.left) - height(n.right)
+}
+
+func height(n *Node) int {
+    if n == nil {
+        return 0
+    }
+    return n.height
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func (t *AVLTree) InOrderTraversal() {
+    inOrderTraversal(t.root)
+    fmt.Println()
+}
+
+func inOrderTraversal(n *Node) {
+    if n == nil {
+        return
+    }
+    inOrderTraversal(n.left)
+    fmt.Print(n.value, " ")
+    inOrderTraversal(n.right)
+}
+
+func main() {
+    tree := AVLTree{}
+    tree.Insert(5)
+    tree.Insert(3)
+    tree.Insert(7)
+    tree.Insert(2)
+    tree.Insert(4)
+    tree.Insert(6)
+    tree.Insert(8)
+
+    fmt.Print("In-Order Traversal: ")
+    tree.InOrderTraversal() // Output: 2 3 4 5 6 7 8
+}
+Red-Black Tree (Using Third-Party Library)
+For Red-Black trees, you can use a third-party library such as github.com/emirpasic/gods.
+
+go
+
+package main
+
+import (
+    "fmt"
+    "github.com/emirpasic/gods/trees/redblacktree"
+)
+
+func main() {
+    tree := redblacktree.NewWithIntComparator()
+    tree.Put(5, "five")
+    tree.Put(3, "three")
+    tree.Put(7, "seven")
+    tree.Put(2, "two")
+    tree.Put(4, "four")
+    tree.Put(6, "six")
+    tree.Put(8, "eight")
+
+    fmt.Print("In-Order Traversal: ")
+    it := tree.Iterator()
+    for it.Next() {
+        fmt.Print(it.Key(), " ")
+    }
+    // Output: 2 3 4 5 6 7 8
+}
+Exercises
+Implement a function to find the height of a binary tree.
+Write a function to check if a binary tree is a valid binary search tree.
+Implement level-order traversal (breadth-first traversal) for a binary tree.
+Write a function to find the lowest common ancestor (LCA) of two nodes in a binary search tree.

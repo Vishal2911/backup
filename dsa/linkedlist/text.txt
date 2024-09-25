@@ -1,0 +1,452 @@
+ Introduction to Linked Lists
+Linked Lists:
+
+A linked list is a linear data structure where elements are not stored in contiguous memory locations.
+Each element (node) contains a value and a reference (or link) to the next node in the sequence.
+Types of Linked Lists:
+
+Singly Linked List: Each node points to the next node.
+Doubly Linked List: Each node points to both the next and the previous nodes.
+Circular Linked List: The last node points back to the first node, forming a circle.
+2. Singly Linked List
+Definition:
+
+go
+Copy code
+type Node struct {
+    value int
+    next  *Node
+}
+
+type SinglyLinkedList struct {
+    head *Node
+}
+Insertion:
+
+At the beginning:
+go
+Copy code
+func (list *SinglyLinkedList) InsertAtBeginning(value int) {
+    newNode := &Node{value: value}
+    newNode.next = list.head
+    list.head = newNode
+}
+At the end:
+go
+Copy code
+func (list *SinglyLinkedList) InsertAtEnd(value int) {
+    newNode := &Node{value: value}
+    if list.head == nil {
+        list.head = newNode
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.next = newNode
+}
+Deletion:
+
+From the beginning:
+go
+Copy code
+func (list *SinglyLinkedList) DeleteFromBeginning() {
+    if list.head != nil {
+        list.head = list.head.next
+    }
+}
+From the end:
+go
+Copy code
+func (list *SinglyLinkedList) DeleteFromEnd() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == nil {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next.next != nil {
+        current = current.next
+    }
+    current.next = nil
+}
+Traversal:
+
+go
+Copy code
+func (list *SinglyLinkedList) Traverse() {
+    current := list.head
+    for current != nil {
+        fmt.Println(current.value)
+        current = current.next
+    }
+}
+3. Doubly Linked List
+Definition:
+
+go
+Copy code
+type DNode struct {
+    value int
+    next  *DNode
+    prev  *DNode
+}
+
+type DoublyLinkedList struct {
+    head *DNode
+}
+Insertion:
+
+At the beginning:
+go
+Copy code
+func (list *DoublyLinkedList) InsertAtBeginning(value int) {
+    newNode := &DNode{value: value}
+    newNode.next = list.head
+    if list.head != nil {
+        list.head.prev = newNode
+    }
+    list.head = newNode
+}
+At the end:
+go
+Copy code
+func (list *DoublyLinkedList) InsertAtEnd(value int) {
+    newNode := &DNode{value: value}
+    if list.head == nil {
+        list.head = newNode
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.next = newNode
+    newNode.prev = current
+}
+Deletion:
+
+From the beginning:
+go
+Copy code
+func (list *DoublyLinkedList) DeleteFromBeginning() {
+    if list.head != nil {
+        list.head = list.head.next
+        if list.head != nil {
+            list.head.prev = nil
+        }
+    }
+}
+From the end:
+go
+Copy code
+func (list *DoublyLinkedList) DeleteFromEnd() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == nil {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.prev.next = nil
+}
+Traversal:
+
+go
+Copy code
+func (list *DoublyLinkedList) Traverse() {
+    current := list.head
+    for current != nil {
+        fmt.Println(current.value)
+        current = current.next
+    }
+}
+4. Circular Linked List
+Definition:
+
+go
+Copy code
+type CNode struct {
+    value int
+    next  *CNode
+}
+
+type CircularLinkedList struct {
+    head *CNode
+}
+Insertion:
+
+At the beginning:
+go
+Copy code
+func (list *CircularLinkedList) InsertAtBeginning(value int) {
+    newNode := &CNode{value: value}
+    if list.head == nil {
+        list.head = newNode
+        newNode.next = newNode
+        return
+    }
+    newNode.next = list.head
+    current := list.head
+    for current.next != list.head {
+        current = current.next
+    }
+    current.next = newNode
+    list.head = newNode
+}
+At the end:
+go
+Copy code
+func (list *CircularLinkedList) InsertAtEnd(value int) {
+    newNode := &CNode{value: value}
+    if list.head == nil {
+        list.head = newNode
+        newNode.next = newNode
+        return
+    }
+    current := list.head
+    for current.next != list.head {
+        current = current.next
+    }
+    current.next = newNode
+    newNode.next = list.head
+}
+Deletion:
+
+From the beginning:
+go
+Copy code
+func (list *CircularLinkedList) DeleteFromBeginning() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == list.head {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next != list.head {
+        current = current.next
+    }
+    list.head = list.head.next
+    current.next = list.head
+}
+From the end:
+go
+Copy code
+func (list *CircularLinkedList) DeleteFromEnd() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == list.head {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next.next != list.head {
+        current = current.next
+    }
+    current.next = list.head
+}
+Traversal:
+
+go
+Copy code
+func (list *CircularLinkedList) Traverse() {
+    if list.head == nil {
+        return
+    }
+    current := list.head
+    for {
+        fmt.Println(current.value)
+        current = current.next
+        if current == list.head {
+            break
+        }
+    }
+}
+5. Examples and Exercises
+Example 1: Singly Linked List Operations
+
+go
+Copy code
+package main
+
+import "fmt"
+
+type Node struct {
+    value int
+    next  *Node
+}
+
+type SinglyLinkedList struct {
+    head *Node
+}
+
+func (list *SinglyLinkedList) InsertAtBeginning(value int) {
+    newNode := &Node{value: value}
+    newNode.next = list.head
+    list.head = newNode
+}
+
+func (list *SinglyLinkedList) InsertAtEnd(value int) {
+    newNode := &Node{value: value}
+    if list.head == nil {
+        list.head = newNode
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.next = newNode
+}
+
+func (list *SinglyLinkedList) DeleteFromBeginning() {
+    if list.head != nil {
+        list.head = list.head.next
+    }
+}
+
+func (list *SinglyLinkedList) DeleteFromEnd() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == nil {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next.next != nil {
+        current = current.next
+    }
+    current.next = nil
+}
+
+func (list *SinglyLinkedList) Traverse() {
+    current := list.head
+    for current != nil {
+        fmt.Println(current.value)
+        current = current.next
+    }
+}
+
+func main() {
+    list := SinglyLinkedList{}
+    list.InsertAtBeginning(1)
+    list.InsertAtEnd(2)
+    list.InsertAtEnd(3)
+    list.Traverse()
+    list.DeleteFromBeginning()
+    list.Traverse()
+    list.DeleteFromEnd()
+    list.Traverse()
+}
+Example 2: Doubly Linked List Operations
+
+go
+Copy code
+package main
+
+import "fmt"
+
+type DNode struct {
+    value int
+    next  *DNode
+    prev  *DNode
+}
+
+type DoublyLinkedList struct {
+    head *DNode
+}
+
+func (list *DoublyLinkedList) InsertAtBeginning(value int) {
+    newNode := &DNode{value: value}
+    newNode.next = list.head
+    if list.head != nil {
+        list.head.prev = newNode
+    }
+    list.head = newNode
+}
+
+func (list *DoublyLinkedList) InsertAtEnd(value int) {
+    newNode := &DNode{value: value}
+    if list.head == nil {
+        list.head = newNode
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.next = newNode
+    newNode.prev = current
+}
+
+func (list *DoublyLinkedList) DeleteFromBeginning() {
+    if list.head != nil {
+        list.head = list.head.next
+        if list.head != nil {
+            list.head.prev = nil
+        }
+    }
+}
+
+func (list *DoublyLinkedList) DeleteFromEnd() {
+    if list.head == nil {
+        return
+    }
+    if list.head.next == nil {
+        list.head = nil
+        return
+    }
+    current := list.head
+    for current.next != nil {
+        current = current.next
+    }
+    current.prev.next = nil
+}
+
+func (list *DoublyLinkedList) Traverse() {
+    current := list.head
+    for current != nil {
+        fmt.Println(current.value)
+        current = current.next
+    }
+}
+
+func main() {
+    list := DoublyLinkedList{}
+    list.InsertAtBeginning(1)
+    list.InsertAtEnd(2)
+    list.InsertAtEnd(3)
+    list.Traverse()
+    list.DeleteFromBeginning()
+    list.Traverse()
+    list.DeleteFromEnd()
+    list.Traverse()
+}
+Exercise 1: Implement a Circular Linked List and test insertion, deletion, and traversal operations.
+
+Exercise 2: Implement a function to reverse a singly linked list.
+
+go
+Copy code
+func (list *SinglyLinkedList) Reverse() {
+    var prev, next *Node
+    current := list.head
+    for current != nil {
+        next = current.next
+        current.next = prev
+        prev = current
+        current = next
+    }
+    list.head = prev
+}

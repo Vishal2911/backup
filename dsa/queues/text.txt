@@ -1,0 +1,435 @@
+What is a Queue?
+A queue is a linear data structure that follows the First In, First Out (FIFO) principle.
+The first element added to the queue is the first one to be removed.
+Common uses include scheduling processes in operating systems, handling requests in web servers, and managing tasks in print spooling.
+Common Operations
+Enqueue: Add an element to the end of the queue.
+Dequeue: Remove and return the element from the front of the queue.
+Peek: Return the front element without removing it.
+IsEmpty: Check if the queue is empty.
+Size: Return the number of elements in the queue.
+Implementation using Arrays and Linked Lists
+Queue Implementation using Arrays
+go
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type Queue struct {
+	items []int
+}
+
+func (q *Queue) Enqueue(item int) {
+	q.items = append(q.items, item)
+}
+
+func (q *Queue) Dequeue() (int, error) {
+	if len(q.items) == 0 {
+		return 0, errors.New("queue is empty")
+	}
+	item := q.items[0]
+	q.items = q.items[1:]
+	return item, nil
+}
+
+func (q *Queue) Peek() (int, error) {
+	if len(q.items) == 0 {
+		return 0, errors.New("queue is empty")
+	}
+	return q.items[0], nil
+}
+
+func (q *Queue) IsEmpty() bool {
+	return len(q.items) == 0
+}
+
+func (q *Queue) Size() int {
+	return len(q.items)
+}
+
+func main() {
+	queue := Queue{}
+	queue.Enqueue(1)
+	queue.Enqueue(2)
+	queue.Enqueue(3)
+	fmt.Println(queue.Peek()) // Output: 1
+	queue.Dequeue()
+	fmt.Println(queue.Peek()) // Output: 2
+}
+Queue Implementation using Linked Lists
+go
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type Node struct {
+	value int
+	next  *Node
+}
+
+type Queue struct {
+	front *Node
+	rear  *Node
+	size  int
+}
+
+func (q *Queue) Enqueue(value int) {
+	newNode := &Node{value: value}
+	if q.rear == nil {
+		q.front = newNode
+		q.rear = newNode
+	} else {
+		q.rear.next = newNode
+		q.rear = newNode
+	}
+	q.size++
+}
+
+func (q *Queue) Dequeue() (int, error) {
+	if q.front == nil {
+		return 0, errors.New("queue is empty")
+	}
+	value := q.front.value
+	q.front = q.front.next
+	if q.front == nil {
+		q.rear = nil
+	}
+	q.size--
+	return value, nil
+}
+
+func (q *Queue) Peek() (int, error) {
+	if q.front == nil {
+		return 0, errors.New("queue is empty")
+	}
+	return q.front.value, nil
+}
+
+func (q *Queue) IsEmpty() bool {
+	return q.front == nil
+}
+
+func (q *Queue) Size() int {
+	return q.size
+}
+
+func main() {
+	queue := Queue{}
+	queue.Enqueue(1)
+	queue.Enqueue(2)
+	queue.Enqueue(3)
+	fmt.Println(queue.Peek()) // Output: 1
+	queue.Dequeue()
+	fmt.Println(queue.Peek()) // Output: 2
+}
+Circular Queue
+What is a Circular Queue?
+A circular queue is a type of queue in which the last position is connected back to the first position to make a circle.
+It effectively uses the storage space and avoids wastage of space.
+go
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type CircularQueue struct {
+	items []int
+	front int
+	rear  int
+	size  int
+}
+
+func NewCircularQueue(size int) *CircularQueue {
+	return &CircularQueue{
+		items: make([]int, size),
+		front: -1,
+		rear:  -1,
+		size:  size,
+	}
+}
+
+func (q *CircularQueue) Enqueue(value int) error {
+	if (q.rear+1)%q.size == q.front {
+		return errors.New("queue is full")
+	}
+	if q.front == -1 {
+		q.front = 0
+	}
+	q.rear = (q.rear + 1) % q.size
+	q.items[q.rear] = value
+	return nil
+}
+
+func (q *CircularQueue) Dequeue() (int, error) {
+	if q.front == -1 {
+		return 0, errors.New("queue is empty")
+	}
+	value := q.items[q.front]
+	if q.front == q.rear {
+		q.front = -1
+		q.rear = -1
+	} else {
+		q.front = (q.front + 1) % q.size
+	}
+	return value, nil
+}
+
+func (q *CircularQueue) Peek() (int, error) {
+	if q.front == -1 {
+		return 0, errors.New("queue is empty")
+	}
+	return q.items[q.front], nil
+}
+
+func (q *CircularQueue) IsEmpty() bool {
+	return q.front == -1
+}
+
+func (q *CircularQueue) Size() int {
+	if q.front == -1 {
+		return 0
+	}
+	if q.rear >= q.front {
+		return q.rear - q.front + 1
+	}
+	return q.size - q.front + q.rear + 1
+}
+
+func main() {
+	circularQueue := NewCircularQueue(5)
+	circularQueue.Enqueue(1)
+	circularQueue.Enqueue(2)
+	circularQueue.Enqueue(3)
+	fmt.Println(circularQueue.Peek()) // Output: 1
+	circularQueue.Dequeue()
+	fmt.Println(circularQueue.Peek()) // Output: 2
+}
+Priority Queue
+What is a Priority Queue?
+A priority queue is a type of queue in which each element is associated with a priority.
+Elements with higher priority are dequeued before elements with lower priority.
+go
+
+package main
+
+import (
+	"container/heap"
+	"fmt"
+)
+
+// An Item is something we manage in a priority queue.
+type Item struct {
+	value    string // The value of the item; arbitrary.
+	priority int    // The priority of the item in the queue.
+	index    int    // The index of the item in the heap.
+}
+
+// A PriorityQueue implements heap.Interface and holds Items.
+type PriorityQueue []*Item
+
+func (pq PriorityQueue) Len() int { return len(pq) }
+
+func (pq PriorityQueue) Less(i, j int) bool {
+	// We want Pop to give us the highest, not lowest, priority so we use greater than here.
+	return pq[i].priority > pq[j].priority
+}
+
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+	pq[i].index = i
+	pq[j].index = j
+}
+
+func (pq *PriorityQueue) Push(x interface{}) {
+	n := len(*pq)
+	item := x.(*Item)
+	item.index = n
+	*pq = append(*pq, item)
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	old[n-1] = nil  // avoid memory leak
+	item.index = -1 // for safety
+	*pq = old[0 : n-1]
+	return item
+}
+
+func (pq *PriorityQueue) update(item *Item, value string, priority int) {
+	item.value = value
+	item.priority = priority
+	heap.Fix(pq, item.index)
+}
+
+func main() {
+	// Some items and their priorities.
+	items := map[string]int{
+		"banana": 3, "apple": 2, "pear": 4,
+	}
+
+	// Create a priority queue, put the items in it, and establish the priority queue (heap) invariants.
+	pq := make(PriorityQueue, len(items))
+	i := 0
+	for value, priority := range items {
+		pq[i] = &Item{
+			value:    value,
+			priority: priority,
+			index:    i,
+		}
+		i++
+	}
+	heap.Init(&pq)
+
+	// Insert a new item and then modify its priority.
+	item := &Item{
+		value:    "orange",
+		priority: 1,
+	}
+	heap.Push(&pq, item)
+	pq.update(item, item.value, 5)
+
+	// Take the items out; they arrive in decreasing priority order.
+	for pq.Len() > 0 {
+		item := heap.Pop(&pq).(*Item)
+		fmt.Printf("%.2d:%s ", item.priority, item.value)
+	}
+}
+Examples and Exercises
+Example 1: Implement a Queue using Stacks
+
+Write a function to implement a queue using two stacks.
+
+go
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type Stack struct {
+	items []int
+}
+
+func (s *Stack) Push(item int) {
+	s.items = append(s.items, item)
+}
+
+func (s *Stack) Pop() (int, error) {
+	if len(s.items) == 0 {
+		return 0, errors.New("stack is empty")
+	}
+	item := s.items[len(s.items)-1]
+	s.items = s.items[:len(s.items)-1]
+	return item, nil
+}
+
+type QueueUsingStacks struct {
+	stack1 Stack
+	stack2 Stack
+}
+
+func (q *QueueUsingStacks) Enqueue(item int) {
+	q.stack1.Push(item)
+}
+
+func (q *QueueUsingStacks) Dequeue() (int, error) {
+	if len(q.stack2.items) == 0 {
+		for len(q.stack1.items) > 0 {
+			item, _ := q.stack1.Pop()
+			q.stack2.Push(item)
+		}
+	}
+	return q.stack2.Pop()
+}
+
+func main() {
+	queue := QueueUsingStacks{}
+	queue.Enqueue(1)
+	queue.Enqueue(2)
+	queue.Enqueue(3)
+	fmt.Println(queue.Dequeue()) // Output: 1
+	fmt.Println(queue.Dequeue()) // Output: 2
+	queue.Enqueue(4)
+	fmt.Println(queue.Dequeue()) // Output: 3
+	fmt.Println(queue.Dequeue()) // Output: 4
+}
+Exercise 1: Implement a Circular Buffer
+
+Implement a circular buffer with operations for adding and removing elements.
+
+go
+
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+type CircularBuffer struct {
+	buffer []int
+	size   int
+	start  int
+	end    int
+	count  int
+}
+
+func NewCircularBuffer(size int) *CircularBuffer {
+	return &CircularBuffer{
+		buffer: make([]int, size),
+		size:   size,
+		start:  0,
+		end:    0,
+		count:  0,
+	}
+}
+
+func (cb *CircularBuffer) Enqueue(value int) error {
+	if cb.count == cb.size {
+		return errors.New("buffer is full")
+	}
+	cb.buffer[cb.end] = value
+	cb.end = (cb.end + 1) % cb.size
+	cb.count++
+	return nil
+}
+
+func (cb *CircularBuffer) Dequeue() (int, error) {
+	if cb.count == 0 {
+		return 0, errors.New("buffer is empty")
+	}
+	value := cb.buffer[cb.start]
+	cb.start = (cb.start + 1) % cb.size
+	cb.count--
+	return value, nil
+}
+
+func main() {
+	cb := NewCircularBuffer(5)
+	cb.Enqueue(1)
+	cb.Enqueue(2)
+	cb.Enqueue(3)
+	fmt.Println(cb.Dequeue()) // Output: 1
+	fmt.Println(cb.Dequeue()) // Output: 2
+	cb.Enqueue(4)
+	cb.Enqueue(5)
+	cb.Enqueue(6)
+	cb.Enqueue(7)
+	fmt.Println(cb.Dequeue()) // Output: 3
+	fmt.Println(cb.Dequeue()) // Output: 4
+}
